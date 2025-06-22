@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  nickname  String?
+  isSeller  Boolean  @default(false)
+  experiences Experience[]
+  reservations Reservation[]
+  reviews    Review[]
+  createdAt  DateTime @default(now())
+}
+
+model Experience {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  seller      User     @relation(fields: [sellerId], references: [id])
+  sellerId    Int
+  reservations Reservation[]
+  reviews     Review[]
+  createdAt   DateTime @default(now())
+}
+
+model Reservation {
+  id            Int      @id @default(autoincrement())
+  experience    Experience @relation(fields: [experienceId], references: [id])
+  experienceId  Int
+  user          User     @relation(fields: [userId], references: [id])
+  userId        Int
+  status        String   @default("pending")
+  createdAt     DateTime @default(now())
+}
+
+model Review {
+  id            Int      @id @default(autoincrement())
+  experience    Experience @relation(fields: [experienceId], references: [id])
+  experienceId  Int
+  user          User     @relation(fields: [userId], references: [id])
+  userId        Int
+  rating        Int
+  comment       String
+  createdAt     DateTime @default(now())
+}
+
+model SellerApplication {
+  id                    Int      @id @default(autoincrement())
+  email                 String
+  name                  String
+  phone                 String?
+  kakaoId               String?  @map("kakao_id")
+  experienceTitle       String   @map("experience_title")
+  experienceDescription String   @map("experience_description")
+  experienceCategory    String   @map("experience_category")
+  pricePerHour          Int?     @map("price_per_hour")
+  status                String   @default("pending")
+  createdAt             DateTime @default(now()) @map("created_at")
+} 
