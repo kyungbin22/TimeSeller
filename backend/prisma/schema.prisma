@@ -11,7 +11,8 @@ model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
   password  String
-  nickname  String?
+  name      String?
+  nickname  String?  @unique
   isSeller  Boolean  @default(false)
   experiences Experience[]
   reservations Reservation[]
